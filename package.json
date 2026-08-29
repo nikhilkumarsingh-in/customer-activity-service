@@ -33,5 +33,8 @@
         "@types/node": "^26.4.0",
         "prettier": "^3.9.6",
         "typescript": "^7.0.2"
+    },
+    "dependencies": {
+        "dotenv-flow": "^4.1.0"
     }
 }

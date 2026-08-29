@@ -7,5 +7,7 @@ tsconfig.build.tsbuildinfo
 tsconfig.tsbuildinfo
 
 .env.development
+.env.production
 .env.local
+.env.test
 .env
