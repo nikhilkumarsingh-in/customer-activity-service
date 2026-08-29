@@ -1,0 +1,33 @@
+{
+    "name": "customer-activity-service",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Fully managed RESTful APIs for the Customer Activity Management service.",
+    "keywords": [
+        "nodejs-application",
+        "customer-activity",
+        "restful-apis"
+    ],
+    "homepage": "https://github.com/nikhilkumarsingh-in/customer-activity-service#readme",
+    "bugs": {
+        "url": "https://github.com/nikhilkumarsingh-in/customer-activity-service/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nikhilkumarsingh-in/customer-activity-service.git"
+    },
+    "license": "UNLICENSED",
+    "author": "Nikhil Kumar Singh <nikhilkumarsingh.in@gmail.com>",
+    "main": "./dist/server.js",
+    "type": "module",
+    "scripts": {
+        "format": "prettier --write .",
+        "format:check": "prettier --check ."
+    },
+    "engines": {
+        "node": ">=24.0.0"
+    },
+    "devDependencies": {
+        "prettier": "^3.9.6"
+    }
+}

@@ -1,0 +1,11 @@
+node_modules/
+coverage/
+build/
+dist/
+
+tsconfig.build.tsbuildinfo
+tsconfig.tsbuildinfo
+
+.env.development
+.env.local
+.env
