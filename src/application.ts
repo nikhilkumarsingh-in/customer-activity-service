@@ -4,7 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
-import { EnvironmentVariables } from "./configuration/environment-variables.configuration.ts";
+import { EnvironmentVariables } from "./config/environment-variables.config.ts";
 
 export const application = express();
 

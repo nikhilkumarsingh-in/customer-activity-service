@@ -1,7 +1,7 @@
 import { Server as HttpServer } from "node:http";
 
 import { application } from "./application.ts";
-import { EnvironmentVariables } from "./configuration/environment-variables.configuration.ts";
+import { EnvironmentVariables } from "./config/environment-variables.config.ts";
 
 const server = new HttpServer(application);
 
