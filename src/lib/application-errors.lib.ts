@@ -26,16 +26,16 @@ const APPLICATION_ERROR_CODES = {
 type ApplicationErrorCode = (typeof APPLICATION_ERROR_CODES)[keyof typeof APPLICATION_ERROR_CODES];
 
 class ApplicationError extends Error {
-    public readonly status: ApplicationStatusCode;
-    public readonly code: ApplicationErrorCode;
+    public readonly statusCode: ApplicationStatusCode;
+    public readonly error: ApplicationErrorCode;
 
-    constructor(message: string, status: ApplicationStatusCode, code: ApplicationErrorCode) {
+    constructor(message: string, statusCode: ApplicationStatusCode, errorCode: ApplicationErrorCode) {
         super(message);
 
         this.name = "ApplicationError";
 
-        this.status = status;
-        this.code = code;
+        this.statusCode = statusCode;
+        this.error = errorCode;
 
         Error.captureStackTrace(this, this.constructor);
     }
