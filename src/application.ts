@@ -11,13 +11,13 @@ import { handleCreateGlobalRateLimitMiddleware } from "./middleware/rate-limit.m
 
 export const application = express();
 
-application.use(express.json({ limit: "1mb" }));
-application.use(express.urlencoded({ extended: true, limit: "1mb" }));
-application.use(cors(CorsConfiguration));
 application.use(helmet());
-application.use(compression({ level: 6, threshold: 512 }));
+application.use(cors(CorsConfiguration));
 application.use(morgan(EnvironmentVariables.CURRENT_ENVIRONMENT === "production" ? "combined" : "dev"));
 application.use(handleCreateGlobalRateLimitMiddleware());
+application.use(express.json({ limit: "1mb" }));
+application.use(express.urlencoded({ extended: true, limit: "1mb" }));
+application.use(compression({ level: 6, threshold: 512 }));
 
 application.use(handleInvalidApiOrNotFoundError);
 application.use(handleApplicationError);
