@@ -1,6 +1,6 @@
 import type { CorsOptions } from "cors";
 
-import { EnvironmentVariables } from "./environment-variables.config.ts";
+import { EnvironmentVariables } from "./environment.config.ts";
 
 export const CorsConfiguration: CorsOptions = {
     allowedHeaders: ["Content-Type", "Authorization"],

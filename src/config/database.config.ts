@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { EnvironmentVariables } from "./environment-variables.config.ts";
+import { EnvironmentVariables } from "./environment.config.ts";
 
 export async function handleEstablishDatabaseConnection() {
     try {

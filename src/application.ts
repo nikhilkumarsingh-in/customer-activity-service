@@ -4,7 +4,7 @@ import helmet from "helmet";
 import compression from "compression";
 import morgan from "morgan";
 
-import { EnvironmentVariables } from "./config/environment-variables.config.ts";
+import { EnvironmentVariables } from "./config/environment.config.ts";
 import { CorsConfiguration } from "./config/cors.config.ts";
 import { handleApplicationError, handleInvalidApiOrNotFoundError } from "./middleware/error-handlers.middleware.ts";
 import { handleCreateGlobalRateLimitMiddleware } from "./middleware/rate-limit.middlware.ts";

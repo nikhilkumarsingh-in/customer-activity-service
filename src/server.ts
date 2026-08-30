@@ -1,7 +1,7 @@
 import { Server as HttpServer } from "node:http";
 
 import { application } from "./application.ts";
-import { EnvironmentVariables } from "./config/environment-variables.config.ts";
+import { EnvironmentVariables } from "./config/environment.config.ts";
 import { handleEstablishDatabaseConnection } from "./config/database.config.ts";
 
 const server = new HttpServer(application);
