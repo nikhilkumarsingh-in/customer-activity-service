@@ -17,4 +17,9 @@ export const EnvironmentVariables = {
     CURRENT_ENVIRONMENT: handleGetEnvironmentVariableByName("NODE_ENV"),
     PORT: Number(handleGetEnvironmentVariableByName("PORT")),
     CLIENT_URL: handleGetEnvironmentVariableByName("CLIENT_URL"),
+
+    DATABASE: {
+        CONNECTION_STRING: handleGetEnvironmentVariableByName("DATABASE_CONNECTION_STRING"),
+        PASSWORD: handleGetEnvironmentVariableByName("DATABASE_PASSWORD"),
+    },
 } as const;
