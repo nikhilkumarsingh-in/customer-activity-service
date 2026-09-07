@@ -10,8 +10,7 @@ import {
 interface Customer {
     fullName: string;
     emailAddress?: string;
-    countryCode: string;
-    phoneNumberWithoutCountryCode: string;
+    phoneNumber: string;
     status: CustomerStatus;
     reasonForAccountSuspension?: string;
     role: CustomerRole;
@@ -24,8 +23,7 @@ const CustomerSchema = new Schema<Customer>(
     {
         fullName: { type: String, required: true, trim: true },
         emailAddress: { type: String, required: false, trim: true, lowercase: true, unique: true, sparse: true },
-        countryCode: { type: String, required: true, trim: true, default: "+91" },
-        phoneNumberWithoutCountryCode: { type: String, required: true, trim: true, unique: true, maxLength: 16 },
+        phoneNumber: { type: String, required: true, trim: true, unique: true, maxLength: 13 },
         status: {
             type: String,
             required: true,
