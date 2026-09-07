@@ -31,7 +31,7 @@ const CustomerSchema = new Schema<Customer>(
             required: true,
             trim: true,
             lowercase: true,
-            default: CUSTOMER_STATUSES.ACTIVE_IS_ACTIVE,
+            default: CUSTOMER_STATUSES.ACCOUNT_IS_ACTIVE,
         },
         reasonForAccountSuspension: { type: String, required: false, trim: true },
         role: { type: String, required: true, trim: true, lowercase: true, default: CUSTOMER_ROLES.INDIVIDUAL },

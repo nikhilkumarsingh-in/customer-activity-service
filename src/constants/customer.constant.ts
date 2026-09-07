@@ -1,5 +1,5 @@
 const CUSTOMER_STATUSES = {
-    ACTIVE_IS_ACTIVE: "account_is_active",
+    ACCOUNT_IS_ACTIVE: "account_is_active",
     SUSPENDED_BY_MANAGEMENT: "suspended_by_management",
     ACCOUNT_WAS_DELETED: "account_was_deleted",
 } as const;
