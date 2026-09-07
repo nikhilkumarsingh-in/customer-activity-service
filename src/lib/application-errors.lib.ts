@@ -25,6 +25,11 @@ const APPLICATION_ERROR_CODES = {
 
 type ApplicationErrorCode = (typeof APPLICATION_ERROR_CODES)[keyof typeof APPLICATION_ERROR_CODES];
 
+const APPLICATION_RESPONSE_STATUS_CODES = {
+    OPERATION_SUCCESSFULL: "operation_successfull",
+    REQUEST_FAILED: "request_failed",
+} as const;
+
 class ApplicationError extends Error {
     public readonly statusCode: ApplicationStatusCode;
     public readonly error: ApplicationErrorCode;
@@ -41,4 +46,4 @@ class ApplicationError extends Error {
     }
 }
 
-export { APPLICATION_STATUS_CODES, APPLICATION_ERROR_CODES, ApplicationError };
+export { APPLICATION_STATUS_CODES, APPLICATION_ERROR_CODES, APPLICATION_RESPONSE_STATUS_CODES, ApplicationError };
