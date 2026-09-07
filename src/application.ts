@@ -7,7 +7,7 @@ import morgan from "morgan";
 import { EnvironmentVariables } from "./config/environment.config.ts";
 import { CorsConfiguration } from "./config/cors.config.ts";
 import { handleApplicationError, handleInvalidApiOrNotFoundError } from "./middleware/error-handlers.middleware.ts";
-import { handleCreateGlobalRateLimitMiddleware } from "./middleware/rate-limit.middlware.ts";
+import { handleCreateGlobalRateLimitMiddleware } from "./middleware/rate-limit.middleware.ts";
 
 import { ModuleRoutes } from "./modules/routes.module.ts";
 

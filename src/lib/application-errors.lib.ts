@@ -1,4 +1,4 @@
-const APPLICATION_STATUS_CODES = {
+const STATUS_CODES = {
     OK: 200,
     CREATED: 201,
     BAD_REQUEST: 400,
@@ -10,9 +10,9 @@ const APPLICATION_STATUS_CODES = {
     INTERNAL_SERVER_ERROR: 500,
 } as const;
 
-type ApplicationStatusCode = (typeof APPLICATION_STATUS_CODES)[keyof typeof APPLICATION_STATUS_CODES];
+type StatusCode = (typeof STATUS_CODES)[keyof typeof STATUS_CODES];
 
-const APPLICATION_ERROR_CODES = {
+const ERROR_CODES = {
     BAD_REQUEST: "BAD_REQUEST",
     PAYLOAD_VALIDATION_FAILED: "PAYLOAD_VALIDATION_FAILED",
     UNAUTHORIZED_ACCESS: "UNAUTHORIZED_ACCESS",
@@ -23,18 +23,18 @@ const APPLICATION_ERROR_CODES = {
     INTERNAL_SERVER_ERROR: "INTERNAL_SERVER_ERROR",
 } as const;
 
-type ApplicationErrorCode = (typeof APPLICATION_ERROR_CODES)[keyof typeof APPLICATION_ERROR_CODES];
+type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];
 
-const APPLICATION_RESPONSE_STATUS_CODES = {
+const RESPONSE_STATUS_CODES = {
     OPERATION_SUCCESSFULL: "operation_successfull",
     REQUEST_FAILED: "request_failed",
 } as const;
 
 class ApplicationError extends Error {
-    public readonly statusCode: ApplicationStatusCode;
-    public readonly error: ApplicationErrorCode;
+    public readonly statusCode: StatusCode;
+    public readonly error: ErrorCode;
 
-    constructor(message: string, statusCode: ApplicationStatusCode, errorCode: ApplicationErrorCode) {
+    constructor(message: string, statusCode: StatusCode, errorCode: ErrorCode) {
         super(message);
 
         this.name = "ApplicationError";
@@ -46,4 +46,4 @@ class ApplicationError extends Error {
     }
 }
 
-export { APPLICATION_STATUS_CODES, APPLICATION_ERROR_CODES, APPLICATION_RESPONSE_STATUS_CODES, ApplicationError };
+export { STATUS_CODES, ERROR_CODES, RESPONSE_STATUS_CODES, ApplicationError };

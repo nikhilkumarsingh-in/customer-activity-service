@@ -1,52 +1,43 @@
 import type { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
 
-import {
-    APPLICATION_ERROR_CODES,
-    APPLICATION_RESPONSE_STATUS_CODES,
-    APPLICATION_STATUS_CODES,
-    ApplicationError,
-} from "../lib/application-errors.lib.ts";
+import { ERROR_CODES, RESPONSE_STATUS_CODES, STATUS_CODES, ApplicationError } from "../lib/application-errors.lib.ts";
 
 function handleInvalidApiOrNotFoundError(request: Request, response: Response) {
-    return response.status(APPLICATION_STATUS_CODES.RESOURCE_NOT_FOUND).json({
+    return response.status(STATUS_CODES.RESOURCE_NOT_FOUND).json({
         message: "Requested API endpoint does not exist at the moment.",
 
-        status: APPLICATION_RESPONSE_STATUS_CODES.REQUEST_FAILED,
-        error: APPLICATION_ERROR_CODES.RESOURCE_NOT_FOUND,
+        status: RESPONSE_STATUS_CODES.REQUEST_FAILED,
+        error: ERROR_CODES.RESOURCE_NOT_FOUND,
     });
 }
 
 function handleApplicationError(error: Error, request: Request, response: Response, next: NextFunction) {
     if (error instanceof SyntaxError)
-        return response.status(APPLICATION_STATUS_CODES.BAD_REQUEST).json({
+        return response.status(STATUS_CODES.BAD_REQUEST).json({
             message: "Received invalid or malformed JSON data in the request body.",
 
-            status: APPLICATION_RESPONSE_STATUS_CODES.REQUEST_FAILED,
-            error: APPLICATION_ERROR_CODES.BAD_REQUEST,
+            status: RESPONSE_STATUS_CODES.REQUEST_FAILED,
+            error: ERROR_CODES.BAD_REQUEST,
         });
 
     if (error instanceof ZodError)
-        return response.status(APPLICATION_STATUS_CODES.BAD_REQUEST).json({
+        return response.status(STATUS_CODES.BAD_REQUEST).json({
             message: error.issues[0]?.message,
-
-            status: APPLICATION_RESPONSE_STATUS_CODES.REQUEST_FAILED,
-            error: APPLICATION_ERROR_CODES.PAYLOAD_VALIDATION_FAILED,
+            status: RESPONSE_STATUS_CODES.REQUEST_FAILED,
+            error: ERROR_CODES.PAYLOAD_VALIDATION_FAILED,
         });
 
     if (error instanceof ApplicationError)
-        return response.status(error.statusCode).json({
-            message: error.message,
+        return response
+            .status(error.statusCode)
+            .json({ message: error.message, status: RESPONSE_STATUS_CODES.REQUEST_FAILED, error: error.error });
 
-            status: APPLICATION_RESPONSE_STATUS_CODES.REQUEST_FAILED,
-            error: error.error,
-        });
-
-    return response.status(APPLICATION_STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+    return response.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
         message: "Something went wrong while processing the request.",
 
-        status: APPLICATION_RESPONSE_STATUS_CODES.REQUEST_FAILED,
-        error: APPLICATION_ERROR_CODES.INTERNAL_SERVER_ERROR,
+        status: RESPONSE_STATUS_CODES.REQUEST_FAILED,
+        error: ERROR_CODES.INTERNAL_SERVER_ERROR,
     });
 }
 
