@@ -1,0 +1,13 @@
+export const CUSTOMER_ROUTES = {
+    CREATE_CUSTOMER: { ENDPOINT: "/", RATE_LIMIT: 25 },
+
+    SEARCH_CUSTOMER_PROFILES: { ENDPOINT: "/" },
+    GET_CUSTOMER_DETAILS: { ENDPOINT: "/:id" },
+
+    UPDATE_CUSTOMER_DETAILS: { ENDPOINT: "/:id", RATE_LIMIT: 25 },
+    UPDATE_CUSTOMER_STATUS: { ENDPOINT: "/:id/status", RATE_LIMIT: 25 },
+
+    DELETE_CUSTOMER_PROFILE: { ENDPOINT: "/:id", RATE_LIMIT: 50 },
+} as const;
+
+export type CustomerRoutesContract = (typeof CUSTOMER_ROUTES)[keyof typeof CUSTOMER_ROUTES];

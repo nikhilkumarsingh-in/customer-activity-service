@@ -1,7 +1,8 @@
 import { Router } from "express";
 
 import { CustomerController } from "./customer.controller.ts";
-import { handleCreateCustomRateLimitMiddlewareForRoute } from "../../middleware/rate-limit.middleware.ts";
+import { handleCreateCustomRateLimitMiddleware } from "../../middleware/rate-limit.middleware.ts";
+import { CUSTOMER_ROUTES } from "./contract/customer-routes.contract.ts";
 
 export class CustomerRoutes {
     public readonly router: Router;
@@ -16,17 +17,33 @@ export class CustomerRoutes {
 
     private handleConfigureRoutes() {
         this.router.post(
-            "/",
-            handleCreateCustomRateLimitMiddlewareForRoute(10),
+            CUSTOMER_ROUTES.CREATE_CUSTOMER.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.CREATE_CUSTOMER.RATE_LIMIT),
             this.controller.create.bind(this.controller)
         );
 
-        this.router.get("/", this.controller.search.bind(this.controller));
-        this.router.get("/:id", this.controller.details.bind(this.controller));
+        this.router.get(
+            CUSTOMER_ROUTES.SEARCH_CUSTOMER_PROFILES.ENDPOINT,
+            this.controller.search.bind(this.controller)
+        );
 
-        this.router.patch("/:id", this.controller.updateDetails.bind(this.controller));
-        this.router.patch("/:id/status", this.controller.updateStatus.bind(this.controller));
+        this.router.get(CUSTOMER_ROUTES.GET_CUSTOMER_DETAILS.ENDPOINT, this.controller.details.bind(this.controller));
 
-        this.router.delete("/:id", this.controller.delete.bind(this.controller));
+        this.router.patch(
+            CUSTOMER_ROUTES.UPDATE_CUSTOMER_DETAILS.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_DETAILS.RATE_LIMIT),
+            this.controller.updateDetails.bind(this.controller)
+        );
+        this.router.patch(
+            CUSTOMER_ROUTES.UPDATE_CUSTOMER_STATUS.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_STATUS.RATE_LIMIT),
+            this.controller.updateStatus.bind(this.controller)
+        );
+
+        this.router.delete(
+            CUSTOMER_ROUTES.DELETE_CUSTOMER_PROFILE.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.DELETE_CUSTOMER_PROFILE.RATE_LIMIT),
+            this.controller.delete.bind(this.controller)
+        );
     }
 }

@@ -17,8 +17,8 @@ function handleCreateGlobalRateLimitMiddleware() {
     return rateLimit({ ...DEFAULT_RATE_LIMIT_OPTIONS, limit: 100 });
 }
 
-function handleCreateCustomRateLimitMiddlewareForRoute(limit: number) {
+function handleCreateCustomRateLimitMiddleware(limit: number) {
     return rateLimit({ ...DEFAULT_RATE_LIMIT_OPTIONS, limit });
 }
 
-export { handleCreateGlobalRateLimitMiddleware, handleCreateCustomRateLimitMiddlewareForRoute };
+export { handleCreateGlobalRateLimitMiddleware, handleCreateCustomRateLimitMiddleware };
