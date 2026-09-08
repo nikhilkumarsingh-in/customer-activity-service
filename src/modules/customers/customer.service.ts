@@ -7,6 +7,7 @@ import type {
     GetCustomerDetailsSchemaType,
     SearchCustomersQuerySchemaType,
     UpdateCustomerDetailsSchemaType,
+    UpdateCustomerRoleSchemaType,
 } from "./customer.validation.ts";
 import { ApplicationError, ERROR_CODES, STATUS_CODES } from "../../lib/application-errors.lib.ts";
 
@@ -51,6 +52,19 @@ export class CustomerService {
     }
 
     public async updateDetails(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerDetailsSchemaType) {
+        const customer = await CustomerModel.findByIdAndUpdate(payload.id, details);
+
+        if (!customer)
+            throw new ApplicationError(
+                "Customer profile was not found with the provided id.",
+                STATUS_CODES.RESOURCE_NOT_FOUND,
+                ERROR_CODES.RESOURCE_NOT_FOUND
+            );
+
+        return;
+    }
+
+    public async updateRole(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerRoleSchemaType) {
         const customer = await CustomerModel.findByIdAndUpdate(payload.id, details);
 
         if (!customer)

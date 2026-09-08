@@ -38,13 +38,10 @@ const PhoneNumberSchema = z.string("Phone number is required for saving contact 
     return parsed.number;
 });
 
+const RoleSchema = z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry.");
+
 const CreateCustomerSchema = z.object(
-    {
-        fullName: FullNameSchema,
-        emailAddress: EmailAddressSchema,
-        phoneNumber: PhoneNumberSchema,
-        role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry."),
-    },
+    { fullName: FullNameSchema, emailAddress: EmailAddressSchema, phoneNumber: PhoneNumberSchema, role: RoleSchema },
     { error: "Please fill out all the required fields to create new customer profile." }
 );
 
@@ -94,11 +91,25 @@ const UpdateCustomerDetailsSchema = z.object(
 
 type UpdateCustomerDetailsSchemaType = z.infer<typeof UpdateCustomerDetailsSchema>;
 
-export { CreateCustomerSchema, SearchCustomersQuerySchema, GetCustomerDetailsSchema, UpdateCustomerDetailsSchema };
+const UpdateCustomerRoleSchema = z.object(
+    { role: RoleSchema },
+    { error: "Please fill out the required field to update customer role." }
+);
+
+type UpdateCustomerRoleSchemaType = z.infer<typeof UpdateCustomerRoleSchema>;
+
+export {
+    CreateCustomerSchema,
+    SearchCustomersQuerySchema,
+    GetCustomerDetailsSchema,
+    UpdateCustomerDetailsSchema,
+    UpdateCustomerRoleSchema,
+};
 
 export type {
     CreateCustomerSchemaType,
     SearchCustomersQuerySchemaType,
     GetCustomerDetailsSchemaType,
     UpdateCustomerDetailsSchemaType,
+    UpdateCustomerRoleSchemaType,
 };
