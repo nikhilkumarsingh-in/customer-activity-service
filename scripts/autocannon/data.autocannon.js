@@ -26,11 +26,6 @@ export const AUTOCANNON_DATA = {
                 METHOD: "PATCH",
             },
 
-            UPDATE_ROLE: {
-                ENDPOINT: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/6a9fc4bc580c98e00083d645/role`,
-                METHOD: "PATCH",
-            },
-
             UPDATE_STATUS: {
                 ENDPOINT: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/6a9fc4bc580c98e00083d645/status`,
                 METHOD: "PATCH",

@@ -4,7 +4,9 @@ import {
     handleGenerateEmailAddressFromFullName,
     handleGenerateUniqueFullName,
     handleGenerateUniquePhoneNumber,
+    handleGetRandomRole,
 } from "./lib.customer.js";
+
 import { AUTOCANNON_DATA } from "../data.autocannon.js";
 
 autocannon.track(
@@ -28,6 +30,7 @@ autocannon.track(
                             fullName,
                             emailAddress: handleGenerateEmailAddressFromFullName(fullName),
                             phoneNumber: handleGenerateUniquePhoneNumber(),
+                            role: handleGetRandomRole(),
                         })
                     );
                 });
