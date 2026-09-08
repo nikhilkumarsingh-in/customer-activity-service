@@ -88,18 +88,16 @@ const GetCustomerDetailsSchema = z.object({ id: z.string("Customer id is require
 type GetCustomerDetailsSchemaType = z.infer<typeof GetCustomerDetailsSchema>;
 
 const UpdateCustomerDetailsSchema = z.object(
-    { fullName: FullNameSchema, emailAddress: EmailAddressSchema, phoneNumber: PhoneNumberSchema },
+    {
+        fullName: FullNameSchema,
+        emailAddress: EmailAddressSchema,
+        phoneNumber: PhoneNumberSchema,
+        role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to update customer details."),
+    },
     { error: "Please fill out all the required fields to update customer profile." }
 );
 
 type UpdateCustomerDetailsSchemaType = z.infer<typeof UpdateCustomerDetailsSchema>;
-
-const UpdateCustomerRoleSchema = z.object(
-    { role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to update customer details.") },
-    { error: "Please fill out the required field to update customer role." }
-);
-
-type UpdateCustomerRoleSchemaType = z.infer<typeof UpdateCustomerRoleSchema>;
 
 const UpdateCustomerStatusSchema = z
     .object(
@@ -131,7 +129,6 @@ export {
     SearchCustomersQuerySchema,
     GetCustomerDetailsSchema,
     UpdateCustomerDetailsSchema,
-    UpdateCustomerRoleSchema,
     UpdateCustomerStatusSchema,
 };
 
@@ -140,6 +137,5 @@ export type {
     SearchCustomersQuerySchemaType,
     GetCustomerDetailsSchemaType,
     UpdateCustomerDetailsSchemaType,
-    UpdateCustomerRoleSchemaType,
     UpdateCustomerStatusSchemaType,
 };
