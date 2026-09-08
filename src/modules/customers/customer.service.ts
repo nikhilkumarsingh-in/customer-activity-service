@@ -48,7 +48,16 @@ export class CustomerService {
     }
 
     public async details(payload: GetCustomerDetailsSchemaType) {
-        return await CustomerModel.findById(payload.id).lean();
+        const customer = await CustomerModel.findById(payload.id).lean();
+
+        if (!customer)
+            throw new ApplicationError(
+                "Customer profile was not found with the provided id.",
+                STATUS_CODES.RESOURCE_NOT_FOUND,
+                ERROR_CODES.RESOURCE_NOT_FOUND
+            );
+
+        return customer;
     }
 
     public async updateDetails(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerDetailsSchemaType) {
