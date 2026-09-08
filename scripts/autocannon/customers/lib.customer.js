@@ -54,9 +54,34 @@ function handleGetRandomRole() {
     return Math.random() < 0.5 ? "individual" : "enterprise";
 }
 
+function handleGetRandomValuesForCustomerStatusChange() {
+    const helpers = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz";
+
+    const random = Math.ceil(Math.random() * 10);
+    const status = random < 3 ? "account_was_deleted" : random < 6 ? "suspended_by_management" : "account_is_active";
+
+    let reasonForAccountSuspension = [];
+
+    for (let i = 0; i < Math.floor(Math.random() * 500); i++) {
+        let randomWord = "";
+
+        for (let j = 0; j < Math.floor(Math.random() * 20); j++)
+            randomWord += helpers[Math.floor(Math.random() * helpers.length)];
+
+        reasonForAccountSuspension.push(randomWord);
+        randomWord = "";
+    }
+
+    return {
+        status,
+        reasonForAccountSuspension: status === "suspended_by_management" ? reasonForAccountSuspension.join(" ") : "",
+    };
+}
+
 export {
     handleGenerateUniqueFullName,
     handleGenerateEmailAddressFromFullName,
     handleGenerateUniquePhoneNumber,
     handleGetRandomRole,
+    handleGetRandomValuesForCustomerStatusChange,
 };
