@@ -87,4 +87,13 @@ export class CustomerController {
             .status(STATUS_CODES.OK)
             .json({ status: RESPONSE_STATUS_CODES.OPERATION_SUCCESSFULL, entity: { id: payload.id } });
     });
+
+    public delete = handleAsynchronousRequest(async (request, response) => {
+        const payload = GetCustomerDetailsSchema.parse(request.params);
+        await this.service.delete(payload);
+
+        return response
+            .status(STATUS_CODES.OK)
+            .json({ status: RESPONSE_STATUS_CODES.OPERATION_SUCCESSFULL, entity: { id: payload.id } });
+    });
 }

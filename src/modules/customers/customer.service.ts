@@ -119,4 +119,17 @@ export class CustomerService {
 
         return;
     }
+
+    public async delete(payload: GetCustomerDetailsSchemaType) {
+        const customer = await CustomerModel.findByIdAndDelete(payload.id);
+
+        if (!customer)
+            throw new ApplicationError(
+                "Customer profile was not found with the provided id.",
+                STATUS_CODES.RESOURCE_NOT_FOUND,
+                ERROR_CODES.RESOURCE_NOT_FOUND
+            );
+
+        return;
+    }
 }

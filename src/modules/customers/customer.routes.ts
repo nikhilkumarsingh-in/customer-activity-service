@@ -27,5 +27,7 @@ export class CustomerRoutes {
         this.router.patch("/:id", this.controller.updateDetails.bind(this.controller));
         this.router.patch("/:id/role", this.controller.updateRole.bind(this.controller));
         this.router.patch("/:id/status", this.controller.updateStatus.bind(this.controller));
+
+        this.router.delete("/:id", this.controller.delete.bind(this.controller));
     }
 }
