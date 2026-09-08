@@ -8,6 +8,7 @@ import type {
     SearchCustomersQuerySchemaType,
     UpdateCustomerDetailsSchemaType,
     UpdateCustomerRoleSchemaType,
+    UpdateCustomerStatusSchemaType,
 } from "./customer.validation.ts";
 import { ApplicationError, ERROR_CODES, STATUS_CODES } from "../../lib/application-errors.lib.ts";
 
@@ -81,6 +82,39 @@ export class CustomerService {
                 "Customer profile was not found with the provided id.",
                 STATUS_CODES.RESOURCE_NOT_FOUND,
                 ERROR_CODES.RESOURCE_NOT_FOUND
+            );
+
+        return;
+    }
+
+    public async updateStatus(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerStatusSchemaType) {
+        const customer = await this.details(payload);
+
+        if (customer.status === details.status)
+            throw new ApplicationError(
+                "Provided status must be different from the current one.",
+                STATUS_CODES.BAD_REQUEST,
+                ERROR_CODES.BAD_REQUEST
+            );
+
+        const updatedResponse = await CustomerModel.findByIdAndUpdate(payload.id, {
+            status: details.status,
+
+            ...(details.status === "suspended_by_management" && details.reasonForAccountSuspension
+                ? {
+                      $set: { reasonForAccountSuspension: details.reasonForAccountSuspension },
+                      $unset: { deletedOn: "" },
+                  }
+                : details.status === "account_was_deleted"
+                  ? { $set: { deletedOn: new Date() }, $unset: { reasonForAccountSuspension: "" } }
+                  : { $unset: { reasonForAccountSuspension: "", deletedOn: "" } }),
+        });
+
+        if (!updatedResponse)
+            throw new ApplicationError(
+                "Something went wrong while updating the customer status.",
+                STATUS_CODES.INTERNAL_SERVER_ERROR,
+                ERROR_CODES.INTERNAL_SERVER_ERROR
             );
 
         return;

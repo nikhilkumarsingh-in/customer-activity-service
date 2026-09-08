@@ -35,5 +35,11 @@ export class CustomerRoutes {
             handleCreateCustomRateLimitMiddlewareForRoute(5),
             this.controller.updateRole.bind(this.controller)
         );
+
+        this.router.patch(
+            "/:id/status",
+            handleCreateCustomRateLimitMiddlewareForRoute(5),
+            this.controller.updateStatus.bind(this.controller)
+        );
     }
 }

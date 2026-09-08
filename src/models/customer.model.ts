@@ -13,6 +13,7 @@ export interface Customer {
     phoneNumber: string;
     status: CustomerStatus;
     reasonForAccountSuspension?: string;
+    deletedOn: Date;
     role: CustomerRole;
 
     createdAt: Date;
@@ -32,6 +33,7 @@ const CustomerSchema = new Schema<Customer>(
             default: CUSTOMER_STATUSES.ACCOUNT_IS_ACTIVE,
         },
         reasonForAccountSuspension: { type: String, required: false, trim: true },
+        deletedOn: { type: Date, required: false },
         role: { type: String, required: true, trim: true, lowercase: true, default: CUSTOMER_ROLES.INDIVIDUAL },
     },
     { collection: "customers", timestamps: true, versionKey: false }

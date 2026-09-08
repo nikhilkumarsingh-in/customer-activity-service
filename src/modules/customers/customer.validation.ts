@@ -38,10 +38,13 @@ const PhoneNumberSchema = z.string("Phone number is required for saving contact 
     return parsed.number;
 });
 
-const RoleSchema = z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry.");
-
 const CreateCustomerSchema = z.object(
-    { fullName: FullNameSchema, emailAddress: EmailAddressSchema, phoneNumber: PhoneNumberSchema, role: RoleSchema },
+    {
+        fullName: FullNameSchema,
+        emailAddress: EmailAddressSchema,
+        phoneNumber: PhoneNumberSchema,
+        role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry."),
+    },
     { error: "Please fill out all the required fields to create new customer profile." }
 );
 
@@ -92,11 +95,36 @@ const UpdateCustomerDetailsSchema = z.object(
 type UpdateCustomerDetailsSchemaType = z.infer<typeof UpdateCustomerDetailsSchema>;
 
 const UpdateCustomerRoleSchema = z.object(
-    { role: RoleSchema },
+    { role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to update customer details.") },
     { error: "Please fill out the required field to update customer role." }
 );
 
 type UpdateCustomerRoleSchemaType = z.infer<typeof UpdateCustomerRoleSchema>;
+
+const UpdateCustomerStatusSchema = z
+    .object(
+        {
+            status: z.enum(CUSTOMER_STATUSES, "Provided status cannot be used to update customer details."),
+            reasonForAccountSuspension: z
+                .string("Reason for account suspension is required to suspend the profile")
+                .optional(),
+        },
+        { error: "Please fill out the required fields to update customer details." }
+    )
+    .superRefine((values, ctx) => {
+        if (values.status === "suspended_by_management") {
+            if (!values.reasonForAccountSuspension)
+                ctx.addIssue("Reason for account supension is required to suspend the profile");
+
+            if (values.reasonForAccountSuspension && values.reasonForAccountSuspension.trim().length < 12)
+                ctx.addIssue("Reason for account suspension must be a valid string and at least 12 characters long.");
+
+            if (values.reasonForAccountSuspension && values.reasonForAccountSuspension.trim().length > 256)
+                ctx.addIssue("Reason for account suspension exceeds the maximum allowed limit of 256 characters.");
+        }
+    });
+
+type UpdateCustomerStatusSchemaType = z.infer<typeof UpdateCustomerStatusSchema>;
 
 export {
     CreateCustomerSchema,
@@ -104,6 +132,7 @@ export {
     GetCustomerDetailsSchema,
     UpdateCustomerDetailsSchema,
     UpdateCustomerRoleSchema,
+    UpdateCustomerStatusSchema,
 };
 
 export type {
@@ -112,4 +141,5 @@ export type {
     GetCustomerDetailsSchemaType,
     UpdateCustomerDetailsSchemaType,
     UpdateCustomerRoleSchemaType,
+    UpdateCustomerStatusSchemaType,
 };

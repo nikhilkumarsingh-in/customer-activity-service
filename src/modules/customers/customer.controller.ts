@@ -4,6 +4,7 @@ import {
     SearchCustomersQuerySchema,
     UpdateCustomerDetailsSchema,
     UpdateCustomerRoleSchema,
+    UpdateCustomerStatusSchema,
 } from "./customer.validation.ts";
 import { CustomerService } from "./customer.service.ts";
 
@@ -70,6 +71,17 @@ export class CustomerController {
         const details = UpdateCustomerRoleSchema.parse(request.body);
 
         await this.service.updateRole(payload, details);
+
+        return response
+            .status(STATUS_CODES.OK)
+            .json({ status: RESPONSE_STATUS_CODES.OPERATION_SUCCESSFULL, entity: { id: payload.id } });
+    });
+
+    public updateStatus = handleAsynchronousRequest(async (request, response) => {
+        const payload = GetCustomerDetailsSchema.parse(request.params);
+        const details = UpdateCustomerStatusSchema.parse(request.body);
+
+        await this.service.updateStatus(payload, details);
 
         return response
             .status(STATUS_CODES.OK)
