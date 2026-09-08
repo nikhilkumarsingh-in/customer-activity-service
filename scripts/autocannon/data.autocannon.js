@@ -10,5 +10,10 @@ export const AUTOCANNON_DATA = {
     DEFAULT_DURATION: 10,
     DEFAULT_CONNECTIONS: 10,
 
-    ROUTES: { CUSTOMERS: { CREATE: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/` } },
+    ROUTES: {
+        CUSTOMERS: {
+            CREATE: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/`,
+            SEARCH: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/?limit=10&page=1&sort=phoneNumber:asc&keyword=&statuses=account_is_active,suspended_by_management,account_was_deleted&roles=enterprise,individual`,
+        },
+    },
 };
