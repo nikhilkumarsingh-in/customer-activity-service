@@ -6,10 +6,10 @@ import { AUTOCANNON_DATA } from "../data.autocannon.js";
 autocannon.track(
     autocannon(
         {
-            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.UPDATE_ROLE.ENDPOINT,
-            duration: AUTOCANNON_DATA.DEFAULT_DURATION,
-            connections: AUTOCANNON_DATA.DEFAULT_CONNECTIONS,
-            method: AUTOCANNON_DATA.ROUTES.CUSTOMERS.UPDATE_ROLE.METHOD,
+            duration: AUTOCANNON_DATA.DEFAULT_RUN_DURATION,
+            connections: AUTOCANNON_DATA.DEFAULT_CONCURRENT_CONNECTIONS,
+            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.UPDATE_CUSTOMER_PROFILE_STATUS.ENDPOINT,
+            method: AUTOCANNON_DATA.ROUTES.CUSTOMERS.UPDATE_CUSTOMER_PROFILE_STATUS.METHOD,
 
             setupClient(client) {
                 client.on("headers", () => {

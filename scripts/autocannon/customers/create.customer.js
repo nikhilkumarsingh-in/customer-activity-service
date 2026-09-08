@@ -12,10 +12,10 @@ import { AUTOCANNON_DATA } from "../data.autocannon.js";
 autocannon.track(
     autocannon(
         {
-            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE.ENDPOINT,
-            duration: AUTOCANNON_DATA.DEFAULT_DURATION,
-            connections: AUTOCANNON_DATA.DEFAULT_CONNECTIONS,
-            method: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE.METHOD,
+            duration: AUTOCANNON_DATA.DEFAULT_RUN_DURATION,
+            connections: AUTOCANNON_DATA.DEFAULT_CONCURRENT_CONNECTIONS,
+            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE_NEW_CUSTOMER_PROFILE.ENDPOINT,
+            method: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE_NEW_CUSTOMER_PROFILE.METHOD,
 
             setupClient(client) {
                 client.on("headers", () => {
