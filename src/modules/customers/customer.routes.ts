@@ -17,8 +17,8 @@ export class CustomerRoutes {
 
     private handleConfigureRoutes() {
         this.router.post(
-            CUSTOMER_ROUTES.CREATE_CUSTOMER.ENDPOINT,
-            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.CREATE_CUSTOMER.RATE_LIMIT),
+            CUSTOMER_ROUTES.CREATE_NEW_CUSTOMER_PROFILE.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.CREATE_NEW_CUSTOMER_PROFILE.RATE_LIMIT),
             this.controller.create.bind(this.controller)
         );
 
@@ -27,16 +27,19 @@ export class CustomerRoutes {
             this.controller.search.bind(this.controller)
         );
 
-        this.router.get(CUSTOMER_ROUTES.GET_CUSTOMER_DETAILS.ENDPOINT, this.controller.details.bind(this.controller));
+        this.router.get(
+            CUSTOMER_ROUTES.GET_CUSTOMER_PROFILE_DETAILS.ENDPOINT,
+            this.controller.details.bind(this.controller)
+        );
 
         this.router.patch(
-            CUSTOMER_ROUTES.UPDATE_CUSTOMER_DETAILS.ENDPOINT,
-            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_DETAILS.RATE_LIMIT),
+            CUSTOMER_ROUTES.UPDATE_CUSTOMER_PROFILE_DETAILS.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_PROFILE_DETAILS.RATE_LIMIT),
             this.controller.updateDetails.bind(this.controller)
         );
         this.router.patch(
-            CUSTOMER_ROUTES.UPDATE_CUSTOMER_STATUS.ENDPOINT,
-            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_STATUS.RATE_LIMIT),
+            CUSTOMER_ROUTES.UPDATE_CUSTOMER_PROFILE_STATUS.ENDPOINT,
+            handleCreateCustomRateLimitMiddleware(CUSTOMER_ROUTES.UPDATE_CUSTOMER_PROFILE_STATUS.RATE_LIMIT),
             this.controller.updateStatus.bind(this.controller)
         );
 
