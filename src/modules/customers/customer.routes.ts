@@ -18,5 +18,7 @@ export class CustomerRoutes {
 
         this.router.get("/", this.controller.search.bind(this.controller));
         this.router.get("/:id", this.controller.details.bind(this.controller));
+
+        this.router.patch("/:id", this.controller.updateDetails.bind(this.controller));
     }
 }

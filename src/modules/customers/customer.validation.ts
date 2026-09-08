@@ -15,28 +15,34 @@ const SORTABLE_FIELDS = [
 
 const SortFieldRegex = new RegExp(`^(${SORTABLE_FIELDS.join("|")}):(asc|desc)$`);
 
+const FullNameSchema = z
+    .string("Full name is required for  identification.")
+    .transform((value) => value.trim().replace(/[^a-zA-Z\s]/g, ""))
+    .pipe(z.string().min(3, "Customer full name must of at least 3 characters long."))
+    .pipe(z.string().max(128, "Provided full name exceeds the maximum allowed limit of 128 characters."));
+
+const EmailAddressSchema = z
+    .email("Provided email address is in invalid format.")
+    .transform((value) => value.trim().toLowerCase().replace(/\s+/g, ""))
+    .pipe(z.string().max(256, "Provided email address exceeds the maximum allowed limit of 256 characters."))
+    .optional();
+
+const PhoneNumberSchema = z.string("Phone number is required for saving contact details.").transform((value, ctx) => {
+    const parsed = parsePhoneNumberFromString(value.trim(), "IN");
+
+    if (!parsed?.isValid()) {
+        ctx.addIssue({ code: "custom", message: "Provided phone number for the contact details is invalid." });
+        return z.NEVER;
+    }
+
+    return parsed.number;
+});
+
 const CreateCustomerSchema = z.object(
     {
-        fullName: z
-            .string("Full name is required for  identification.")
-            .transform((value) => value.trim().replace(/[^a-zA-Z\s]/g, ""))
-            .pipe(z.string().min(3, "Customer full name must of at least 3 characters long."))
-            .pipe(z.string().max(128, "Provided full name exceeds the maximum allowed limit of 128 characters.")),
-        emailAddress: z
-            .email("Provided email address is in invalid format.")
-            .transform((value) => value.trim().toLowerCase().replace(/\s+/g, ""))
-            .pipe(z.string().max(256, "Provided email address exceeds the maximum allowed limit of 256 characters."))
-            .optional(),
-        phoneNumber: z.string("Phone number is required for saving contact details.").transform((value, ctx) => {
-            const parsed = parsePhoneNumberFromString(value.trim(), "IN");
-
-            if (!parsed?.isValid()) {
-                ctx.addIssue({ code: "custom", message: "Provided phone number for the contact details is invalid." });
-                return z.NEVER;
-            }
-
-            return parsed.number;
-        }),
+        fullName: FullNameSchema,
+        emailAddress: EmailAddressSchema,
+        phoneNumber: PhoneNumberSchema,
         role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry."),
     },
     { error: "Please fill out all the required fields to create new customer profile." }
@@ -81,6 +87,18 @@ const GetCustomerDetailsSchema = z.object({ id: z.string("Customer id is require
 
 type GetCustomerDetailsSchemaType = z.infer<typeof GetCustomerDetailsSchema>;
 
-export { CreateCustomerSchema, SearchCustomersQuerySchema, GetCustomerDetailsSchema };
+const UpdateCustomerDetailsSchema = z.object(
+    { fullName: FullNameSchema, emailAddress: EmailAddressSchema, phoneNumber: PhoneNumberSchema },
+    { error: "Please fill out all the required fields to update customer profile." }
+);
 
-export type { CreateCustomerSchemaType, SearchCustomersQuerySchemaType, GetCustomerDetailsSchemaType };
+type UpdateCustomerDetailsSchemaType = z.infer<typeof UpdateCustomerDetailsSchema>;
+
+export { CreateCustomerSchema, SearchCustomersQuerySchema, GetCustomerDetailsSchema, UpdateCustomerDetailsSchema };
+
+export type {
+    CreateCustomerSchemaType,
+    SearchCustomersQuerySchemaType,
+    GetCustomerDetailsSchemaType,
+    UpdateCustomerDetailsSchemaType,
+};
