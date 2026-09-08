@@ -1,7 +1,12 @@
 import type { QueryFilter } from "mongoose";
 
 import { CustomerModel, type Customer } from "../../models/customer.model.ts";
-import type { CreateCustomerSchemaType, SearchCustomersQuerySchemaType } from "./customer.validation.ts";
+
+import type {
+    CreateCustomerSchemaType,
+    GetCustomerDetailsSchemaType,
+    SearchCustomersQuerySchemaType,
+} from "./customer.validation.ts";
 
 export class CustomerService {
     public async create(details: CreateCustomerSchemaType) {
@@ -37,5 +42,9 @@ export class CustomerService {
         ]);
 
         return { customers, count, totalPages: Math.ceil(count / limit) };
+    }
+
+    public async details(payload: GetCustomerDetailsSchemaType) {
+        return await CustomerModel.findById(payload.id).lean();
     }
 }

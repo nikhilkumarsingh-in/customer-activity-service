@@ -77,6 +77,10 @@ const SearchCustomersQuerySchema = z.object({
 
 type SearchCustomersQuerySchemaType = z.infer<typeof SearchCustomersQuerySchema>;
 
-export { CreateCustomerSchema, SearchCustomersQuerySchema };
+const GetCustomerDetailsSchema = z.object({ id: z.string("Customer id is required for fetching details.").trim() });
 
-export type { CreateCustomerSchemaType, SearchCustomersQuerySchemaType };
+type GetCustomerDetailsSchemaType = z.infer<typeof GetCustomerDetailsSchema>;
+
+export { CreateCustomerSchema, SearchCustomersQuerySchema, GetCustomerDetailsSchema };
+
+export type { CreateCustomerSchemaType, SearchCustomersQuerySchemaType, GetCustomerDetailsSchemaType };
