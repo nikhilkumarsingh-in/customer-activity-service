@@ -3,6 +3,8 @@ import type { CreateCustomerSchemaType } from "./customer.validation.ts";
 
 import { ERROR_CODES, STATUS_CODES, ApplicationError } from "../../lib/application-errors.lib.ts";
 
+type SearchProps = { limit: number; page: number; sort: string; keyword?: string; statuses?: string; roles?: string };
+
 export class CustomerService {
     public async create(details: CreateCustomerSchemaType) {
         if (details.emailAddress && (await CustomerModel.exists({ emailAddress: details.emailAddress })))
@@ -30,5 +32,33 @@ export class CustomerService {
         });
 
         return customer;
+    }
+
+    public async search({ limit, page, sort, keyword, statuses, roles }: SearchProps) {
+        const queries = {} as any;
+
+        if (keyword)
+            queries.$or = [
+                { fullName: { $regex: keyword, $options: "i" } },
+                { emailAddress: { $regex: keyword, $options: "i" } },
+                { phoneNumber: { $regex: keyword, $options: "i" } },
+            ];
+
+        if (statuses) queries.status = { $in: statuses.split(",") };
+        if (roles) queries.role = { $in: roles.split(",") };
+
+        const [customers, count] = await Promise.all([
+            CustomerModel.find(queries)
+                .sort({ [String(sort.split("=")[0])]: sort.split("=")[1] === "desc" ? -1 : 1 })
+                .skip(page * limit - limit)
+                .limit(limit)
+                .lean()
+                .exec(),
+            CustomerModel.countDocuments(queries).exec(),
+        ]);
+
+        const pages = Math.ceil(count / limit);
+
+        return { customers, pages, count };
     }
 }

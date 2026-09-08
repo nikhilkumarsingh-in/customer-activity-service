@@ -15,5 +15,6 @@ export class CustomerRoutes {
 
     private handleConfigureRoutes() {
         this.router.post("/", this.controller.create.bind(this.controller));
+        this.router.get("/", this.controller.search.bind(this.controller));
     }
 }
