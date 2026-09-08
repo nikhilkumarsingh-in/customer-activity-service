@@ -30,7 +30,8 @@
         "clean:dist": "node ./scripts/remove-dist.script.js",
         "autocannon:customers:create": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/create.customer.js",
         "autocannon:customers:search": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/search.customer.js",
-        "autocannon:customers:get-details": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/get-details.customer.js"
+        "autocannon:customers:get-details": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/get-details.customer.js",
+        "autocannon:customers:update-details": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/update-details.customer.js"
     },
     "engines": {
         "node": ">=24.0.0"
