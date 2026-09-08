@@ -49,7 +49,7 @@ export class CustomerService {
 
         const [customers, count] = await Promise.all([
             CustomerModel.find(queries)
-                .sort({ [String(sort.split("=")[0])]: sort.split("=")[1] === "desc" ? -1 : 1 })
+                .sort({ [String(sort.split(":")[0])]: sort.split(":")[1] === "desc" ? -1 : 1 })
                 .skip(page * limit - limit)
                 .limit(limit)
                 .lean()
