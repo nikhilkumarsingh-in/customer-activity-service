@@ -13,7 +13,7 @@ export const AUTOCANNON_DATA = {
     ROUTES: {
         CUSTOMERS: {
             CREATE: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/`,
-            SEARCH: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/?limit=10&page=1&sort=phoneNumber:asc&keyword=&statuses=account_is_active,suspended_by_management,account_was_deleted&roles=enterprise,individual`,
+            SEARCH: `${SERVER_ENDPOINT}${CUSTOMER_ROUTE}/?limit=10&currentPage=1&sort=phoneNumber:asc&keyword=&statuses=account_is_active,suspended_by_management,account_was_deleted&roles=enterprise,individual`,
         },
     },
 };
