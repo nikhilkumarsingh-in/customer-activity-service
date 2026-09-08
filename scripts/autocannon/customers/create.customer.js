@@ -11,16 +11,16 @@ import { AUTOCANNON_DATA } from "../data.autocannon.js";
 autocannon.track(
     autocannon(
         {
-            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE,
-
+            url: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE.ENDPOINT,
             duration: AUTOCANNON_DATA.DEFAULT_DURATION,
             connections: AUTOCANNON_DATA.DEFAULT_CONNECTIONS,
-
-            method: "POST",
-
-            headers: { "content-type": "application/json" },
+            method: AUTOCANNON_DATA.ROUTES.CUSTOMERS.CREATE.METHOD,
 
             setupClient(client) {
+                client.on("headers", () => {
+                    client.setHeaders({ "content-type": "application/json" });
+                });
+
                 client.on("body", () => {
                     const fullName = handleGenerateUniqueFullName();
 
