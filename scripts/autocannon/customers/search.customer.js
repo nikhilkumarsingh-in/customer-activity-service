@@ -18,7 +18,7 @@ autocannon.track(
         },
         (error) => {
             if (error) {
-                console.log("Something went wrong running script for search-customer:", error);
+                console.log("Something went wrong running script for search-customers:", error);
                 process.exit(1);
             }
         }
