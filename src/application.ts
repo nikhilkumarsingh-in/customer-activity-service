@@ -21,7 +21,7 @@ application.use(morgan(EnvironmentVariables.CURRENT_ENVIRONMENT === "production"
 application.use(handleCreateGlobalRateLimitMiddleware());
 application.use(express.json({ limit: "1mb" }));
 application.use(express.urlencoded({ extended: true, limit: "1mb" }));
-application.use(compression({ level: 9, threshold: 0 }));
+application.use(compression({ level: 6, threshold: 0 }));
 
 application.use(EnvironmentVariables.SERVER_BASE_PATH, router.router);
 

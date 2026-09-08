@@ -1,41 +1,82 @@
 import { z } from "zod";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
-import { CUSTOMER_ROLES } from "../../constants/customer.constant.ts";
+import { CUSTOMER_ROLES, CUSTOMER_STATUSES } from "../../constants/customer.constant.ts";
 
-export const CreateCustomerSchema = z.object(
+const SORTABLE_FIELDS = [
+    "fullName",
+    "emailAddress",
+    "phoneNumber",
+    "createdAt",
+    "updatedAt",
+    "status",
+    "role",
+] as const;
+
+const SortFieldRegex = new RegExp(`^(${SORTABLE_FIELDS.join("|")}):(asc|desc)$`);
+
+const CreateCustomerSchema = z.object(
     {
         fullName: z
-            .string({ error: "Customer full name is required for the profile identification." })
-            .trim()
-            .min(3, { error: "Full name must of at least 3 characters long." })
-            .max(128, { error: "Provided full name exceeds the maximum allowed limit of 128 characters." }),
+            .string("Full name is required for  identification.")
+            .transform((value) => value.trim().replace(/[^a-zA-Z\s]/g, ""))
+            .pipe(z.string().min(3, "Customer full name must of at least 3 characters long."))
+            .pipe(z.string().max(128, "Provided full name exceeds the maximum allowed limit of 128 characters.")),
         emailAddress: z
-            .email({ error: "Provided email address is in invalid format." })
-            .trim()
-            .max(256, { error: "Provided email address exceeds the maximum allowed limit of 256 characters." })
-            .toLowerCase()
-            .optional()
-            .nullable(),
-        phoneNumber: z
-            .string({ error: "Phone number is required for saving contact details." })
-            .transform((value, ctx) => {
-                const parsed = parsePhoneNumberFromString(value.trim(), "IN");
+            .email("Provided email address is in invalid format.")
+            .transform((value) => value.trim().toLowerCase().replace(/\s+/g, ""))
+            .pipe(z.string().max(256, "Provided email address exceeds the maximum allowed limit of 256 characters."))
+            .optional(),
+        phoneNumber: z.string("Phone number is required for saving contact details.").transform((value, ctx) => {
+            const parsed = parsePhoneNumberFromString(value.trim(), "IN");
 
-                if (!parsed?.isValid()) {
-                    ctx.addIssue({
-                        code: "custom",
-                        message: "Provided phone number for the contact details is invalid.",
-                    });
+            if (!parsed?.isValid()) {
+                ctx.addIssue({ code: "custom", message: "Provided phone number for the contact details is invalid." });
+                return z.NEVER;
+            }
 
-                    return z.NEVER;
-                }
-
-                return parsed.number;
-            }),
-        role: z.enum(CUSTOMER_ROLES, { error: "Provided role cannot be used to create a new entry." }),
+            return parsed.number;
+        }),
+        role: z.enum(CUSTOMER_ROLES, "Provided role cannot be used to create a new entry."),
     },
-    { error: "Please fill out all the required fields to continue." }
+    { error: "Please fill out all the required fields to create new customer profile." }
 );
 
-export type CreateCustomerSchemaType = z.infer<typeof CreateCustomerSchema>;
+type CreateCustomerSchemaType = z.infer<typeof CreateCustomerSchema>;
+
+const SearchCustomersQuerySchema = z.object({
+    limit: z.coerce.number("Page limit variable must be a valid number value.").int().min(1).max(100).default(10),
+    currentPage: z.coerce.number("Current page variable must be a valid number value").int().min(1).default(1),
+    sort: z
+        .string("Sort variable must be a valid string value.")
+        .regex(SortFieldRegex, "Sort must contain a valid field and direction.")
+        .default("fullName:asc")
+        .transform((value) => {
+            const [field, direction] = value.trim().split(":") as [(typeof SORTABLE_FIELDS)[number], "asc" | "desc"];
+
+            return { field, direction };
+        }),
+
+    keyword: z
+        .string("Keyword variable must be a valid string value.")
+        .transform((value) => value.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+        .optional(),
+
+    statuses: z
+        .string("Statuses variable must be a valid string value.")
+        .transform((value) => value?.split(",").map((item) => item.trim()))
+        .pipe(z.array(z.enum(CUSTOMER_STATUSES, "Received invalid value for customer statuses.")))
+        .optional(),
+
+    roles: z
+        .string("Roles variable must be a valid string value.")
+        .transform((value) => value?.split(",").map((item) => item.trim()))
+        .pipe(z.array(z.enum(CUSTOMER_ROLES, "Received invalid value for customer roles.")))
+        .optional(),
+});
+
+type SearchCustomersQuerySchemaType = z.infer<typeof SearchCustomersQuerySchema>;
+
+export { CreateCustomerSchema, SearchCustomersQuerySchema };
+
+export type { CreateCustomerSchemaType, SearchCustomersQuerySchemaType };
