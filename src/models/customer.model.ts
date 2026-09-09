@@ -13,7 +13,7 @@ export interface Customer {
     phoneNumber: string;
     status: CustomerStatus;
     reasonForAccountSuspension?: string;
-    deletedOn: Date;
+    deletedOn?: Date;
     role: CustomerRole;
 
     createdAt: Date;
