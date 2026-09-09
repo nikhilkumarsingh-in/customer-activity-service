@@ -28,12 +28,15 @@
         "dev": "cross-env NODE_ENV=development tsx watch ./src/server.ts",
         "start": "cross-env NODE_ENV=production node ./dist/server.js",
         "clean:dist": "node ./scripts/remove-dist.script.js",
-        "autocannon:customers:create": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/create.customer.js",
-        "autocannon:customers:search": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/search.customer.js",
-        "autocannon:customers:timeline": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/get-timeline.customer.js",
-        "autocannon:customers:get-details": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/get-details.customer.js",
-        "autocannon:customers:update-details": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/update-details.customer.js",
-        "autocannon:customers:update-status": "cross-env NODE_ENV=development node ./scripts/autocannon/customers/update-status.customer.js"
+        "benchmark": "cross-env NODE_ENV=development node ./scripts/autocannon/runner.autocannon.js"
+    },
+    "autocannon": {
+        "customers:create": "node ./scripts/autocannon/customers/create.customer.js",
+        "customers:search": "node ./scripts/autocannon/customers/search.customer.js",
+        "customers:timeline": "node ./scripts/autocannon/customers/get-timeline.customer.js",
+        "customers:get-details": "node ./scripts/autocannon/customers/get-details.customer.js",
+        "customers:update-details": "node ./scripts/autocannon/customers/update-details.customer.js",
+        "customers:update-status": "node ./scripts/autocannon/customers/update-status.customer.js"
     },
     "engines": {
         "node": ">=24.0.0"
