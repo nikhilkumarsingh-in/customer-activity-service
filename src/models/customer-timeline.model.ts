@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 
 import {
     CUSTOMER_ACTIVITY_TYPES,
@@ -14,7 +14,7 @@ export interface CustomerTimelineMetadata {
 }
 
 export interface CustomerTimeline {
-    customer: Schema.Types.ObjectId;
+    customer: Types.ObjectId;
 
     action: CustomerActivityType;
     metadata: CustomerTimelineMetadata;

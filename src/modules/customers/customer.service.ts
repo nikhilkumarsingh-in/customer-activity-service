@@ -1,6 +1,7 @@
-import type { QueryFilter } from "mongoose";
+import { startSession, Types, type ClientSession, type QueryFilter } from "mongoose";
 
 import { CustomerModel, type Customer } from "../../models/customer.model.ts";
+import { CustomerTimelineModel, type CustomerTimelineMetadata } from "../../models/customer-timeline.model.ts";
 
 import type {
     CreateCustomerSchemaType,
@@ -11,16 +12,50 @@ import type {
 } from "./customer.validation.ts";
 
 import { ApplicationError, ERROR_CODES, STATUS_CODES } from "../../lib/application-errors.lib.ts";
+import { CUSTOMER_ACTIVITY_TYPES, type CustomerActivityType } from "../../constants/customer.constant.ts";
 
+type CreateTimelineProps = {
+    id: Types.ObjectId;
+    session: ClientSession;
+    action: CustomerActivityType;
+    metadata: CustomerTimelineMetadata;
+};
 export class CustomerService {
+    private async handleCreateTimeline(details: CreateTimelineProps) {
+        await CustomerTimelineModel.create(
+            [{ customer: details.id, action: details.action, metadata: details.metadata }],
+            { session: details.session }
+        );
+    }
     public async create(details: CreateCustomerSchemaType) {
-        return await CustomerModel.create({
-            fullName: details.fullName,
-            phoneNumber: details.phoneNumber,
-            role: details.role,
+        const session = await startSession();
 
-            ...(details.emailAddress && { emailAddress: details.emailAddress }),
-        });
+        try {
+            return await session.withTransaction(async () => {
+                const customer = new CustomerModel({
+                    fullName: details.fullName,
+                    phoneNumber: details.phoneNumber,
+                    role: details.role,
+
+                    ...(details.emailAddress && { emailAddress: details.emailAddress }),
+                });
+
+                await customer.save({ session });
+
+                await this.handleCreateTimeline({
+                    id: customer._id,
+                    action: CUSTOMER_ACTIVITY_TYPES.PROFILE_CREATED,
+
+                    metadata: { status: customer.status },
+
+                    session,
+                });
+
+                return customer;
+            });
+        } finally {
+            await session.endSession();
+        }
     }
 
     public async search({ limit, currentPage, sort, keyword, statuses, roles }: SearchCustomersQuerySchemaType) {
@@ -62,49 +97,90 @@ export class CustomerService {
     }
 
     public async updateDetails(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerDetailsSchemaType) {
-        const customer = await CustomerModel.findByIdAndUpdate(payload.id, details);
+        const session = await startSession();
 
-        if (!customer)
-            throw new ApplicationError(
-                "Customer profile was not found with the provided id.",
-                STATUS_CODES.RESOURCE_NOT_FOUND,
-                ERROR_CODES.RESOURCE_NOT_FOUND
-            );
+        try {
+            await session.withTransaction(async () => {
+                const customer = await CustomerModel.findByIdAndUpdate(payload.id, details, {
+                    session,
+                    returnDocument: "after",
+                });
 
-        return;
+                if (!customer)
+                    throw new ApplicationError(
+                        "Customer profile was not found with the provided id.",
+                        STATUS_CODES.RESOURCE_NOT_FOUND,
+                        ERROR_CODES.RESOURCE_NOT_FOUND
+                    );
+
+                await this.handleCreateTimeline({
+                    id: customer._id,
+                    action: CUSTOMER_ACTIVITY_TYPES.UPDATE_PROFILE_DETAILS,
+
+                    metadata: { status: customer.status },
+
+                    session,
+                });
+            });
+        } finally {
+            await session.endSession();
+        }
     }
 
     public async updateStatus(payload: GetCustomerDetailsSchemaType, details: UpdateCustomerStatusSchemaType) {
-        const customer = await this.details(payload);
+        const session = await startSession();
 
-        if (customer.status === details.status)
-            throw new ApplicationError(
-                "Provided status must be different from the current one.",
-                STATUS_CODES.BAD_REQUEST,
-                ERROR_CODES.BAD_REQUEST
-            );
+        try {
+            await session.withTransaction(async () => {
+                const customer = await this.details(payload);
 
-        const updatedResponse = await CustomerModel.findByIdAndUpdate(payload.id, {
-            status: details.status,
+                if (customer.status === details.status)
+                    throw new ApplicationError(
+                        "Provided status must be different from the current one.",
+                        STATUS_CODES.BAD_REQUEST,
+                        ERROR_CODES.BAD_REQUEST
+                    );
 
-            ...(details.status === "suspended_by_management" && details.reasonForAccountSuspension
-                ? {
-                      $set: { reasonForAccountSuspension: details.reasonForAccountSuspension },
-                      $unset: { deletedOn: "" },
-                  }
-                : details.status === "account_was_deleted"
-                  ? { $set: { deletedOn: new Date() }, $unset: { reasonForAccountSuspension: "" } }
-                  : { $unset: { reasonForAccountSuspension: "", deletedOn: "" } }),
-        });
+                const updated = await CustomerModel.findByIdAndUpdate(
+                    payload.id,
+                    {
+                        status: details.status,
 
-        if (!updatedResponse)
-            throw new ApplicationError(
-                "Something went wrong while updating the customer status.",
-                STATUS_CODES.INTERNAL_SERVER_ERROR,
-                ERROR_CODES.INTERNAL_SERVER_ERROR
-            );
+                        ...(details.status === "suspended_by_management" && details.reasonForAccountSuspension
+                            ? {
+                                  $set: { reasonForAccountSuspension: details.reasonForAccountSuspension },
+                                  $unset: { deletedOn: "" },
+                              }
+                            : details.status === "account_was_deleted"
+                              ? { $set: { deletedOn: new Date() }, $unset: { reasonForAccountSuspension: "" } }
+                              : { $unset: { reasonForAccountSuspension: "", deletedOn: "" } }),
+                    },
+                    { session, returnDocument: "after" }
+                );
 
-        return;
+                if (!updated)
+                    throw new ApplicationError(
+                        "Something went wrong while updating the customer status.",
+                        STATUS_CODES.INTERNAL_SERVER_ERROR,
+                        ERROR_CODES.INTERNAL_SERVER_ERROR
+                    );
+
+                await this.handleCreateTimeline({
+                    id: updated._id,
+                    action: CUSTOMER_ACTIVITY_TYPES.UPDATE_PROFILE_STATUS,
+
+                    metadata: {
+                        status: updated.status,
+                        reasonForAccountSuspension: updated.reasonForAccountSuspension,
+                        deletedOn: updated.deletedOn,
+                    },
+
+                    session,
+                });
+            });
+        } finally {
+            await session.endSession();
+        }
     }
 
     public async delete(payload: GetCustomerDetailsSchemaType) {
