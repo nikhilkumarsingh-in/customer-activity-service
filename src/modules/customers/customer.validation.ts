@@ -3,17 +3,13 @@ import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 import { CUSTOMER_ROLES, CUSTOMER_STATUSES } from "../../constants/customer.constant.ts";
 
-const SORTABLE_FIELDS = [
-    "fullName",
-    "emailAddress",
-    "phoneNumber",
-    "createdAt",
-    "updatedAt",
-    "status",
-    "role",
-] as const;
+const CUSTOMER_SORTABLE_FIELDS = ["fullName", "emailAddress", "phoneNumber", "createdAt", "updatedAt"] as const;
+const GET_CUSTOMER_TIMELINE_SORTABLE_FIELDS = ["action", "createdAt"] as const;
 
-const SortFieldRegex = new RegExp(`^(${SORTABLE_FIELDS.join("|")}):(asc|desc)$`);
+const CustomerSortFieldRegex = new RegExp(`^(${CUSTOMER_SORTABLE_FIELDS.join("|")}):(asc|desc)$`);
+const GetCustomerTimelineSortFieldRegex = new RegExp(
+    `^(${GET_CUSTOMER_TIMELINE_SORTABLE_FIELDS.join("|")}):(asc|desc)$`
+);
 
 const FullNameSchema = z
     .string("Full name is required for  identification.")
@@ -38,6 +34,23 @@ const PhoneNumberSchema = z.string("Phone number is required for saving contact 
     return parsed.number;
 });
 
+const LimitSchema = z.coerce
+    .number("Page limit variable must be a valid number value.")
+    .int()
+    .min(1)
+    .max(100)
+    .default(10);
+
+const CurrentPageSchema = z.coerce.number("Current page variable must be a valid number value").int().min(1).default(1);
+
+const SortSchema = z.string("Sort variable must be a valid string value.");
+
+const StatusesSchema = z
+    .string("Statuses variable must be a valid string value.")
+    .transform((value) => value?.split(",").map((item) => item.trim()))
+    .pipe(z.array(z.enum(CUSTOMER_STATUSES, "Received invalid value for customer statuses.")))
+    .optional();
+
 const CreateCustomerSchema = z.object(
     {
         fullName: FullNameSchema,
@@ -51,14 +64,15 @@ const CreateCustomerSchema = z.object(
 type CreateCustomerSchemaType = z.infer<typeof CreateCustomerSchema>;
 
 const SearchCustomersQuerySchema = z.object({
-    limit: z.coerce.number("Page limit variable must be a valid number value.").int().min(1).max(100).default(10),
-    currentPage: z.coerce.number("Current page variable must be a valid number value").int().min(1).default(1),
-    sort: z
-        .string("Sort variable must be a valid string value.")
-        .regex(SortFieldRegex, "Sort must contain a valid field and direction.")
+    limit: LimitSchema,
+    currentPage: CurrentPageSchema,
+    sort: SortSchema.regex(CustomerSortFieldRegex, "Sort must contain a valid field and direction.")
         .default("fullName:asc")
         .transform((value) => {
-            const [field, direction] = value.trim().split(":") as [(typeof SORTABLE_FIELDS)[number], "asc" | "desc"];
+            const [field, direction] = value.trim().split(":") as [
+                (typeof CUSTOMER_SORTABLE_FIELDS)[number],
+                "asc" | "desc",
+            ];
 
             return { field, direction };
         }),
@@ -68,11 +82,7 @@ const SearchCustomersQuerySchema = z.object({
         .transform((value) => value.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
         .optional(),
 
-    statuses: z
-        .string("Statuses variable must be a valid string value.")
-        .transform((value) => value?.split(",").map((item) => item.trim()))
-        .pipe(z.array(z.enum(CUSTOMER_STATUSES, "Received invalid value for customer statuses.")))
-        .optional(),
+    statuses: StatusesSchema,
 
     roles: z
         .string("Roles variable must be a valid string value.")
@@ -82,6 +92,25 @@ const SearchCustomersQuerySchema = z.object({
 });
 
 type SearchCustomersQuerySchemaType = z.infer<typeof SearchCustomersQuerySchema>;
+
+const GetCustomerTimelineQuerySchema = z.object({
+    limit: LimitSchema,
+    currentPage: CurrentPageSchema,
+    sort: SortSchema.regex(GetCustomerTimelineSortFieldRegex, "Sort must contain a valid field and direction.")
+        .default("createdAt:desc")
+        .transform((value) => {
+            const [field, direction] = value.trim().split(":") as [
+                (typeof GET_CUSTOMER_TIMELINE_SORTABLE_FIELDS)[number],
+                "asc" | "desc",
+            ];
+
+            return { field, direction };
+        }),
+
+    statuses: StatusesSchema,
+});
+
+type GetCustomerTimelineQuerySchemaType = z.infer<typeof GetCustomerTimelineQuerySchema>;
 
 const GetCustomerDetailsSchema = z.object({ id: z.string("Customer id is required for fetching details.").trim() });
 
@@ -127,6 +156,7 @@ type UpdateCustomerStatusSchemaType = z.infer<typeof UpdateCustomerStatusSchema>
 export {
     CreateCustomerSchema,
     SearchCustomersQuerySchema,
+    GetCustomerTimelineQuerySchema,
     GetCustomerDetailsSchema,
     UpdateCustomerDetailsSchema,
     UpdateCustomerStatusSchema,
@@ -135,6 +165,7 @@ export {
 export type {
     CreateCustomerSchemaType,
     SearchCustomersQuerySchemaType,
+    GetCustomerTimelineQuerySchemaType,
     GetCustomerDetailsSchemaType,
     UpdateCustomerDetailsSchemaType,
     UpdateCustomerStatusSchemaType,

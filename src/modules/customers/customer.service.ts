@@ -7,6 +7,7 @@ import type {
     CreateCustomerSchemaType,
     GetCustomerDetailsSchemaType,
     SearchCustomersQuerySchemaType,
+    GetCustomerTimelineQuerySchemaType,
     UpdateCustomerDetailsSchemaType,
     UpdateCustomerStatusSchemaType,
 } from "./customer.validation.ts";
@@ -81,6 +82,23 @@ export class CustomerService {
         ]);
 
         return { customers, count, totalPages: Math.ceil(count / limit) };
+    }
+
+    public async getTimeline({ limit, currentPage, sort, statuses }: GetCustomerTimelineQuerySchemaType) {
+        const queries: QueryFilter<Customer> = {};
+
+        if (statuses) queries.status = { $in: statuses };
+
+        const [timeline, count] = await Promise.all([
+            CustomerTimelineModel.find(queries)
+                .sort({ [sort.field]: sort.direction })
+                .skip((currentPage - 1) * limit)
+                .limit(limit + 1)
+                .lean(),
+            CustomerTimelineModel.countDocuments(queries),
+        ]);
+
+        return { timeline, count, totalPages: Math.ceil(count / limit) };
     }
 
     public async details(payload: GetCustomerDetailsSchemaType) {

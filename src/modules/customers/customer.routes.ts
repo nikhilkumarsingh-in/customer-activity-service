@@ -28,6 +28,11 @@ export class CustomerRoutes {
         );
 
         this.router.get(
+            CUSTOMER_ROUTES.GET_CUSTOMER_TIMELINE.ENDPOINT,
+            this.controller.getTimeline.bind(this.controller)
+        );
+
+        this.router.get(
             CUSTOMER_ROUTES.GET_CUSTOMER_PROFILE_DETAILS.ENDPOINT,
             this.controller.details.bind(this.controller)
         );

@@ -1,6 +1,7 @@
 import {
     CreateCustomerSchema,
     GetCustomerDetailsSchema,
+    GetCustomerTimelineQuerySchema,
     SearchCustomersQuerySchema,
     UpdateCustomerDetailsSchema,
     UpdateCustomerStatusSchema,
@@ -36,6 +37,25 @@ export class CustomerController {
 
             entity: {
                 customers: data.customers,
+                pagination: {
+                    limit: queries.limit,
+                    currentPage: queries.currentPage,
+                    totalPages: data.totalPages,
+                    totalCount: data.count,
+                },
+            },
+        });
+    });
+
+    public getTimeline = handleAsynchronousRequest(async (request, response) => {
+        const queries = GetCustomerTimelineQuerySchema.parse(request.query);
+        const data = await this.service.getTimeline(queries);
+
+        return response.status(STATUS_CODES.OK).json({
+            status: RESPONSE_STATUS_CODES.OPERATION_SUCCESSFULL,
+
+            entity: {
+                timeline: data.timeline,
                 pagination: {
                     limit: queries.limit,
                     currentPage: queries.currentPage,
