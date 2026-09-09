@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 
-import { CUSTOMER_ROLES, CUSTOMER_STATUSES } from "../../constants/customer.constant.ts";
+import { CUSTOMER_ACTIVITY_TYPES, CUSTOMER_ROLES, CUSTOMER_STATUSES } from "../../constants/customer.constant.ts";
 
 const CUSTOMER_SORTABLE_FIELDS = ["fullName", "emailAddress", "phoneNumber", "createdAt", "updatedAt"] as const;
 const GET_CUSTOMER_TIMELINE_SORTABLE_FIELDS = ["action", "createdAt"] as const;
@@ -45,12 +45,6 @@ const CurrentPageSchema = z.coerce.number("Current page variable must be a valid
 
 const SortSchema = z.string("Sort variable must be a valid string value.");
 
-const StatusesSchema = z
-    .string("Statuses variable must be a valid string value.")
-    .transform((value) => value?.split(",").map((item) => item.trim()))
-    .pipe(z.array(z.enum(CUSTOMER_STATUSES, "Received invalid value for customer statuses.")))
-    .optional();
-
 const CreateCustomerSchema = z.object(
     {
         fullName: FullNameSchema,
@@ -82,7 +76,11 @@ const SearchCustomersQuerySchema = z.object({
         .transform((value) => value.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
         .optional(),
 
-    statuses: StatusesSchema,
+    statuses: z
+        .string("Statuses variable must be a valid string value.")
+        .transform((value) => value?.split(",").map((item) => item.trim()))
+        .pipe(z.array(z.enum(CUSTOMER_STATUSES, "Received invalid value for customer statuses.")))
+        .optional(),
 
     roles: z
         .string("Roles variable must be a valid string value.")
@@ -107,7 +105,11 @@ const GetCustomerTimelineQuerySchema = z.object({
             return { field, direction };
         }),
 
-    statuses: StatusesSchema,
+    actions: z
+        .string("Actions variable must be a valid string value.")
+        .transform((value) => value?.split(",").map((item) => item.trim()))
+        .pipe(z.array(z.enum(CUSTOMER_ACTIVITY_TYPES, "Received invalid value for timeline action.")))
+        .optional(),
 });
 
 type GetCustomerTimelineQuerySchemaType = z.infer<typeof GetCustomerTimelineQuerySchema>;

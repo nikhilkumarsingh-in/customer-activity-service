@@ -17,6 +17,11 @@ export const AUTOCANNON_DATA = {
                 METHOD: "GET",
             },
 
+            GET_CUSTOMER_TIMELINE: {
+                ENDPOINT: `${SERVER_ENDPOINT}/customers/?limit=10&currentPage=1&sort=createdAt:desc&actions=customer_profile_created,update_customer_profile_details,update_customer_profile_status`,
+                METHOD: "GET",
+            },
+
             GET_CUSTOMER_PROFILE_DETAILS: {
                 ENDPOINT: `${SERVER_ENDPOINT}/customers/6a9fc4bc580c98e00083d645`,
                 METHOD: "GET",

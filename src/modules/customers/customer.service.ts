@@ -1,7 +1,11 @@
 import { startSession, Types, type ClientSession, type QueryFilter } from "mongoose";
 
 import { CustomerModel, type Customer } from "../../models/customer.model.ts";
-import { CustomerTimelineModel, type CustomerTimelineMetadata } from "../../models/customer-timeline.model.ts";
+import {
+    CustomerTimelineModel,
+    type CustomerTimeline,
+    type CustomerTimelineMetadata,
+} from "../../models/customer-timeline.model.ts";
 
 import type {
     CreateCustomerSchemaType,
@@ -84,10 +88,10 @@ export class CustomerService {
         return { customers, count, totalPages: Math.ceil(count / limit) };
     }
 
-    public async getTimeline({ limit, currentPage, sort, statuses }: GetCustomerTimelineQuerySchemaType) {
-        const queries: QueryFilter<Customer> = {};
+    public async getTimeline({ limit, currentPage, sort, actions }: GetCustomerTimelineQuerySchemaType) {
+        const queries: QueryFilter<CustomerTimeline> = {};
 
-        if (statuses) queries.status = { $in: statuses };
+        if (actions) queries.action = { $in: actions };
 
         const [timeline, count] = await Promise.all([
             CustomerTimelineModel.find(queries)
