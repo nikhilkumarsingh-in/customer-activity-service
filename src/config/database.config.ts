@@ -12,9 +12,6 @@ export async function handleEstablishDatabaseConnection() {
         const response = await mongoose.connect(databaseConnectionString);
         console.log("Database connected successfully with host:", response.connection.host);
     } catch (error) {
-        const errorMessage = (error as Error).message;
-        console.error("Database connection failed due to", errorMessage);
-
-        process.exit(1);
+        throw error;
     }
 }
