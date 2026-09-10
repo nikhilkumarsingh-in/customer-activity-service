@@ -21,22 +21,13 @@
     "main": "./dist/server.js",
     "type": "module",
     "scripts": {
+        "dev": "tsx watch ./src/server.ts",
+        "typecheck": "tsc -p tsconfig.json --noEmit",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "typecheck": "tsc -p tsconfig.json --noEmit",
         "build": "tsc -p tsconfig.build.json",
-        "dev": "cross-env NODE_ENV=development tsx watch ./src/server.ts",
-        "start": "cross-env NODE_ENV=production node ./dist/server.js",
-        "clean:dist": "node ./scripts/remove-dist.script.js",
-        "benchmark": "cross-env NODE_ENV=development node ./scripts/autocannon/runner.autocannon.js"
-    },
-    "autocannon": {
-        "customers:create": "node ./scripts/autocannon/customers/create.customer.js",
-        "customers:search": "node ./scripts/autocannon/customers/search.customer.js",
-        "customers:timeline": "node ./scripts/autocannon/customers/get-timeline.customer.js",
-        "customers:get-details": "node ./scripts/autocannon/customers/get-details.customer.js",
-        "customers:update-details": "node ./scripts/autocannon/customers/update-details.customer.js",
-        "customers:update-status": "node ./scripts/autocannon/customers/update-status.customer.js"
+        "clean": "node ./scripts/remove-dist.script.js",
+        "start": "node ./dist/server.js"
     },
     "engines": {
         "node": ">=24.0.0"
@@ -47,8 +38,6 @@
         "@types/express": "^5.0.6",
         "@types/morgan": "^1.9.10",
         "@types/node": "^26.4.0",
-        "autocannon": "^8.0.0",
-        "cross-env": "^10.1.0",
         "prettier": "^3.9.6",
         "tsx": "^4.23.12",
         "typescript": "^7.0.2"
