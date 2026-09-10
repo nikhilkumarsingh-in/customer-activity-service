@@ -16,7 +16,7 @@
         "type": "git",
         "url": "git+https://github.com/nikhilkumarsingh-in/customer-activity-service.git"
     },
-    "license": "UNLICENSED",
+    "license": "MIT",
     "author": "Nikhil Kumar Singh <nikhilkumarsingh.in@gmail.com>",
     "main": "./dist/server.js",
     "type": "module",
