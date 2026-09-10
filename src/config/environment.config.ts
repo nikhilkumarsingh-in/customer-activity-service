@@ -1,6 +1,4 @@
-import { config } from "dotenv-flow";
-
-config({ silent: true });
+await import("dotenv").then((dotenv) => dotenv.config({ quiet: true }));
 
 function handleGetEnvironmentVariableByName(variableName: string) {
     const variableValue = process.env[variableName];
